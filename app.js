@@ -20,7 +20,7 @@ app.use(session);
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get('/', authRoots);
+app.use('/', authRoots);
 
 app.listen(3000, () => {
     console.log("app is listening at port 3000");

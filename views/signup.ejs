@@ -3,146 +3,291 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Sign Up - File Uploader</title>
+    <title>Sign Up</title>
     <link rel="stylesheet" href="/styles/signup.css" />
   </head>
   <body>
-    <!-- Animated background elements -->
-    <div class="bg-element planet1"></div>
-    <div class="bg-element planet2"></div>
-    <div class="bg-element orb1"></div>
-    <div class="bg-element orb2"></div>
-    <div class="bg-element orb3"></div>
-
-    <div class="signup-container">
+    <div class="container">
       <div class="signup-card">
-        <h1>Join Us</h1>
-        <p class="subtitle">Create your account and start uploading</p>
-
-        <form action="/auth/register" method="POST" class="signup-form">
-          <div class="name-row">
-            <div class="input-group">
-              <input type="text" name="firstName" id="firstName" required />
-              <label for="firstName">First Name</label>
-            </div>
-
-            <div class="input-group">
-              <input type="text" name="lastName" id="lastName" required />
-              <label for="lastName">Last Name</label>
-            </div>
-          </div>
-
-          <div class="input-group">
-            <input type="text" name="username" id="username" required />
-            <label for="username">Username</label>
-          </div>
-
-          <div class="input-group">
-            <input type="email" name="email" id="email" required />
-            <label for="email">Email Address</label>
-          </div>
-
-          <div class="input-group">
-            <input type="password" name="password" id="password" required />
-            <label for="password">Password</label>
-            <button type="button" class="show-password">Show</button>
-          </div>
-
-          <div class="input-group">
-            <input
-              type="password"
-              name="confirmPassword"
-              id="confirmPassword"
-              required
-            />
-            <label for="confirmPassword">Confirm Password</label>
-            <button type="button" class="show-password">Show</button>
-          </div>
-
-          <div class="terms-checkbox">
-            <input type="checkbox" id="terms" name="terms" required />
-            <label for="terms">
-              I agree to the <a href="/terms">Terms of Service</a> and
-              <a href="/privacy">Privacy Policy</a>
-            </label>
-          </div>
-
-          <button type="submit" class="signup-btn">Create Account</button>
-        </form>
-
-        <div class="divider">
-          <button class="apple-signin">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-              <path
-                d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09z"
-              />
-              <path
-                d="M15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701z"
-              />
-            </svg>
-            Sign up with Apple
-          </button>
+        <div class="signup-header">
+          <h1>Sign Up</h1>
+          <p class="subtitle">Create an account</p>
         </div>
 
+        <form
+          class="signup-form"
+          action="/signup"
+          method="POST"
+          id="signupForm"
+        >
+          <div class="input-group">
+            <input
+              type="text"
+              id="fullname"
+              name="fullname"
+              placeholder="Full Name"
+              required
+            />
+          </div>
+          <div class="input-group">
+            <input
+              type="text"
+              id="username"
+              name="username"
+              placeholder="Username"
+              required
+            />
+          </div>
+
+          <div class="input-group password-group">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Password"
+              required
+            />
+            <button
+              type="button"
+              class="show-password"
+              onclick="togglePassword()"
+            >
+              Show
+            </button>
+          </div>
+
+          <button type="submit" class="signup-btn" id="signupButton">
+            <span class="button-text">Sign Up</span>
+            <div class="loading-spinner" style="display: none">
+              <i class="fas fa-spinner fa-spin"></i>
+            </div>
+          </button>
+
+          <div class="divider">
+            <span>or</span>
+          </div>
+
+          <a href="" class="apple-signin">
+            <i class="fab fa-apple"></i>
+            Sign up with Apple
+          </a>
+        </form>
+
         <div class="signin-link">
-          Already have an account? <a href="/login">Sign In</a>
+          <span>Already have an account? </span>
+          <a href="/login">Log in Now</a>
         </div>
       </div>
     </div>
 
     <script>
-      document.querySelectorAll(".show-password").forEach((btn) => {
-        btn.addEventListener("click", function () {
-          const passwordInput =
-            this.previousElementSibling.previousElementSibling;
-
-          if (passwordInput.type === "password") {
-            passwordInput.type = "text";
-            this.textContent = "Hide";
-          } else {
-            passwordInput.type = "password";
-            this.textContent = "Show";
-          }
-        });
+      document.addEventListener("DOMContentLoaded", function () {
+        initializePage();
+        setupFormValidation();
+        setupFormSubmission();
+        setupInputEnhancements();
       });
 
-      document.querySelectorAll(".input-group input").forEach((input) => {
-        input.addEventListener("focus", function () {
-          this.parentElement.classList.add("focused");
-        });
-
-        input.addEventListener("blur", function () {
-          if (this.value === "") {
-            this.parentElement.classList.remove("focused");
+      function initializePage() {
+        setTimeout(() => {
+          const signupCard = document.querySelector(".signup-card");
+          if (signupCard) {
+            signupCard.classList.add("loaded");
           }
-        });
-      });
-
-      document
-        .getElementById("confirmPassword")
-        .addEventListener("input", function () {
-          const password = document.getElementById("password").value;
-          const confirmPassword = this.value;
-
-          if (password !== confirmPassword) {
-            this.setCustomValidity("Passwords do not match");
-          } else {
-            this.setCustomValidity("");
+        }, 100);
+        
+        const errorMessage = document.querySelector(".error-message");
+        if (!errorMessage) {
+          const firstInput = document.getElementById("fullname");
+          if (firstInput) {
+            setTimeout(() => firstInput.focus(), 500);
           }
-        });
+        }
+      }
 
-      document
-        .querySelector(".signup-form")
-        .addEventListener("submit", function (e) {
-          const password = document.getElementById("password").value;
-          const confirmPassword =
-            document.getElementById("confirmPassword").value;
+      function togglePassword() {
+        const passwordInput = document.getElementById("password");
+        const showButton = document.querySelector(".show-password");
 
-          if (password !== confirmPassword) {
+        if (!passwordInput || !showButton) return;
+
+        if (passwordInput.type === "password") {
+          passwordInput.type = "text";
+          showButton.textContent = "Hide";
+          showButton.setAttribute("aria-label", "Hide password");
+        } else {
+          passwordInput.type = "password";
+          showButton.textContent = "Show";
+          showButton.setAttribute("aria-label", "Show password");
+        }
+      }
+
+      function setupFormValidation() {
+        const passwordInput = document.getElementById("password");
+        const fullnameInput = document.getElementById("fullname");
+        const usernameInput = document.getElementById("username");
+
+        if (passwordInput) {
+          passwordInput.addEventListener("input", validatePassword);
+          passwordInput.addEventListener("blur", validatePassword);
+        }
+
+        if (fullnameInput) {
+          fullnameInput.addEventListener("blur", validateFullname);
+        }
+
+        if (usernameInput) {
+          usernameInput.addEventListener("blur", validateUsername);
+        }
+      }
+
+      function setupFormSubmission() {
+        const form = document.getElementById("signupForm");
+        const submitButton = document.getElementById("signupButton");
+
+        if (form) {
+          form.addEventListener("submit", function(e) {
             e.preventDefault();
-            alert("Passwords do not match!");
-          }
+            
+            if (validateForm()) {
+              showLoading(true);
+              // Simulate form submission
+              setTimeout(() => {
+                showLoading(false);
+                // Handle successful submission here
+                console.log("Form submitted successfully");
+              }, 2000);
+            }
+          });
+        }
+      }
+
+      function setupInputEnhancements() {
+        const inputs = document.querySelectorAll("input");
+        inputs.forEach(input => {
+          input.addEventListener("focus", function() {
+            this.parentElement.classList.add("focused");
+          });
+          
+          input.addEventListener("blur", function() {
+            this.parentElement.classList.remove("focused");
+          });
         });
+      }
+
+      function validateFullname() {
+        const fullnameInput = document.getElementById("fullname");
+        const value = fullnameInput.value.trim();
+
+        fullnameInput.classList.remove("valid", "invalid");
+
+        if (value.length === 0) return;
+
+        if (value.length >= 2) {
+          fullnameInput.classList.add("valid");
+          removeFieldError(fullnameInput);
+        } else {
+          fullnameInput.classList.add("invalid");
+          showFieldError(fullnameInput, "Full name must be at least 2 characters");
+        }
+      }
+
+      function validateUsername() {
+        const usernameInput = document.getElementById("username");
+        const value = usernameInput.value.trim();
+
+        usernameInput.classList.remove("valid", "invalid");
+
+        if (value.length === 0) return;
+
+        if (value.length >= 3 && /^[a-zA-Z0-9_]+$/.test(value)) {
+          usernameInput.classList.add("valid");
+          removeFieldError(usernameInput);
+        } else {
+          usernameInput.classList.add("invalid");
+          showFieldError(usernameInput, "Username must be at least 3 characters and contain only letters, numbers, and underscores");
+        }
+      }
+
+      function validatePassword() {
+        const passwordInput = document.getElementById("password");
+        const value = passwordInput.value;
+
+        passwordInput.classList.remove("valid", "invalid");
+
+        if (value.length === 0) return;
+
+        if (value.length >= 6) {
+          passwordInput.classList.add("valid");
+          removeFieldError(passwordInput);
+        } else {
+          passwordInput.classList.add("invalid");
+          showFieldError(passwordInput, "Password must be at least 6 characters");
+        }
+      }
+
+      function showFieldError(input, message) {
+        removeFieldError(input);
+        
+        const errorDiv = document.createElement("div");
+        errorDiv.className = "field-error";
+        errorDiv.textContent = message;
+        
+        input.parentElement.appendChild(errorDiv);
+      }
+
+      function removeFieldError(input) {
+        const existingError = input.parentElement.querySelector(".field-error");
+        if (existingError) {
+          existingError.remove();
+        }
+      }
+
+      function validateForm() {
+        const fullname = document.getElementById("fullname").value.trim();
+        const username = document.getElementById("username").value.trim();
+        const password = document.getElementById("password").value;
+
+        let isValid = true;
+
+        if (fullname.length < 2) {
+          showFieldError(document.getElementById("fullname"), "Full name is required");
+          isValid = false;
+        }
+
+        if (username.length < 3 || !/^[a-zA-Z0-9_]+$/.test(username)) {
+          showFieldError(document.getElementById("username"), "Valid username is required");
+          isValid = false;
+        }
+
+        if (password.length < 6) {
+          showFieldError(document.getElementById("password"), "Password must be at least 6 characters");
+          isValid = false;
+        }
+
+        return isValid;
+      }
+
+      function showLoading(show) {
+        const button = document.getElementById("signupButton");
+        const buttonText = button.querySelector(".button-text");
+        const spinner = button.querySelector(".loading-spinner");
+
+        if (show) {
+          button.classList.add("loading");
+          button.disabled = true;
+          buttonText.style.display = "none";
+          spinner.style.display = "flex";
+        } else {
+          button.classList.remove("loading");
+          button.disabled = false;
+          buttonText.style.display = "block";
+          spinner.style.display = "none";
+        }
+      }
+
+      // Make togglePassword globally available
+      window.togglePassword = togglePassword;
     </script>
   </body>
 </html>

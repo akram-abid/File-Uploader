@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/styles//upload.css">
+    <title><%= title %></title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="nav">
+        <a href="/posts">← Back to Posts</a>
+        <span>Welcome, <%= user.fullname %></span>
+      </div>
+
+      <div class="upload-card">
+        <h1>Upload File</h1>
+        <p class="subtitle">Share your files securely</p>
+
+        <% if (typeof error !== 'undefined') { %>
+        <div class="alert alert-error"><%= error %></div>
+        <% } %> <% if (typeof success !== 'undefined') { %>
+        <div class="alert alert-success">
+          <%= success %> <% if (typeof fileInfo !== 'undefined') { %>
+          <div class="file-info">
+            <strong>File Details:</strong><br />
+            Name: <%= fileInfo.name %><br />
+            Size: <%= fileInfo.size %><br />
+            Type: <%= fileInfo.type %>
+          </div>
+          <% } %>
+        </div>
+        <% } %>
+
+        <form
+          action="/upload"
+          method="POST"
+          enctype="multipart/form-data"
+          class="upload-form"
+        >
+          <div class="upload-zone">
+            <div class="upload-text">
+              <strong>Select a file to upload</strong><br />
+              Drag and drop or click to browse
+            </div>
+
+            <div class="file-input">
+              <input
+                type="file"
+                name="file"
+                id="file"
+                accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.txt"
+                required
+              />
+              <label for="file" class="file-input-label">Choose File</label>
+            </div>
+
+            <div class="format-info">
+              Supported: Images (JPG, PNG, GIF), Documents (PDF, DOC, DOCX,
+              TXT)<br />
+              Maximum size: 5MB
+            </div>
+          </div>
+
+          <button type="submit" class="upload-btn">Upload File</button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

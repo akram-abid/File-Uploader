@@ -17,7 +17,7 @@
         <form
           class="signup-form"
           action="/signup"
-          method="POST"
+          method="post"
           id="signupForm"
         >
           <div class="input-group">
@@ -83,8 +83,6 @@
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         initializePage();
-        setupFormValidation();
-        setupFormSubmission();
         setupInputEnhancements();
       });
 
@@ -141,27 +139,6 @@
         }
       }
 
-      function setupFormSubmission() {
-        const form = document.getElementById("signupForm");
-        const submitButton = document.getElementById("signupButton");
-
-        if (form) {
-          form.addEventListener("submit", function(e) {
-            e.preventDefault();
-            
-            if (validateForm()) {
-              showLoading(true);
-              // Simulate form submission
-              setTimeout(() => {
-                showLoading(false);
-                // Handle successful submission here
-                console.log("Form submitted successfully");
-              }, 2000);
-            }
-          });
-        }
-      }
-
       function setupInputEnhancements() {
         const inputs = document.querySelectorAll("input");
         inputs.forEach(input => {
@@ -173,40 +150,6 @@
             this.parentElement.classList.remove("focused");
           });
         });
-      }
-
-      function validateFullname() {
-        const fullnameInput = document.getElementById("fullname");
-        const value = fullnameInput.value.trim();
-
-        fullnameInput.classList.remove("valid", "invalid");
-
-        if (value.length === 0) return;
-
-        if (value.length >= 2) {
-          fullnameInput.classList.add("valid");
-          removeFieldError(fullnameInput);
-        } else {
-          fullnameInput.classList.add("invalid");
-          showFieldError(fullnameInput, "Full name must be at least 2 characters");
-        }
-      }
-
-      function validateUsername() {
-        const usernameInput = document.getElementById("username");
-        const value = usernameInput.value.trim();
-
-        usernameInput.classList.remove("valid", "invalid");
-
-        if (value.length === 0) return;
-
-        if (value.length >= 3 && /^[a-zA-Z0-9_]+$/.test(value)) {
-          usernameInput.classList.add("valid");
-          removeFieldError(usernameInput);
-        } else {
-          usernameInput.classList.add("invalid");
-          showFieldError(usernameInput, "Username must be at least 3 characters and contain only letters, numbers, and underscores");
-        }
       }
 
       function validatePassword() {

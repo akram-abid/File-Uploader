@@ -1,0 +1,240 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+  height: 100vh;
+  color: #ffffff;
+  position: relative;
+  background-image: url('/assets/10298b5802e0e3a3c5b42ac024073087.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+.nav {
+  position: absolute;
+  top: 30px;
+  left: 20px;
+  right: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  opacity: 0.8;
+}
+
+.nav a {
+  color: #a0b6ff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.nav a:hover {
+  color: #ffffff;
+}
+
+.nav span {
+  color: #cccccc;
+}
+
+.upload-card {
+  background: rgba(0, 0, 0, 0.473);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 40px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.upload-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+}
+
+h1 {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  background: linear-gradient(135deg, #ffffff 0%, #a0b1ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.subtitle {
+  color: #cccccc;
+  font-size: 16px;
+  margin-bottom: 30px;
+  opacity: 0.8;
+}
+
+.alert {
+  padding: 15px;
+  margin: 20px 0;
+  border-radius: 12px;
+  font-size: 14px;
+  animation: slideIn 0.3s ease;
+}
+
+.alert-success {
+  background: rgba(76, 175, 80, 0.1);
+  color: #81c784;
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.alert-error {
+  background: rgba(244, 67, 54, 0.1);
+  color: #e57373;
+  border: 1px solid rgba(244, 67, 54, 0.3);
+}
+
+.file-info {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 15px;
+  font-size: 13px;
+  color: #cccccc;
+}
+
+.upload-form {
+  margin-top: 20px;
+}
+
+.upload-zone {
+  border: 2px dashed rgba(160, 160, 255, 0.3);
+  border-radius: 16px;
+  padding: 40px 20px;
+  margin: 20px 0;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.upload-zone:hover {
+  border-color: rgba(160, 182, 255, 0.6);
+  background: rgba(160, 201, 255, 0.02);
+}
+
+.upload-zone::before {
+  content: "📁";
+  font-size: 48px;
+  display: block;
+  margin-bottom: 15px;
+  opacity: 0.6;
+}
+
+.upload-text {
+  color: #cccccc;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.file-input {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.file-input input[type="file"] {
+  position: absolute;
+  left: -9999px;
+  opacity: 0;
+}
+
+.file-input-label {
+  display: inline-block;
+  padding: 12px 30px;
+  background: rgba(160, 177, 255, 0.1);
+  border: 1px solid rgba(160, 190, 255, 0.3);
+  border-radius: 8px;
+  color: #a0a0ff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.file-input-label:hover {
+  background: rgba(160, 190, 255, 0.2);
+  border-color: rgba(160, 193, 255, 0.5);
+}
+
+.upload-btn {
+  background: linear-gradient(135deg, #669bea 0%, #4b69a2 100%);
+  color: white;
+  padding: 15px 40px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  margin-top: 20px;
+  box-shadow: 0 4px 15px rgba(102, 164, 234, 0.4);
+}
+
+.upload-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 133, 234, 0.6);
+}
+
+.upload-btn:active {
+  transform: translateY(0);
+}
+
+.format-info {
+  font-size: 12px;
+  color: #888;
+  margin-top: 10px;
+  opacity: 0.7;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    padding: 20px 15px;
+  }
+
+  .upload-card {
+    padding: 30px 20px;
+  }
+
+  .nav {
+    position: relative;
+    top: 0;
+    margin-bottom: 30px;
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+}

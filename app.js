@@ -5,6 +5,7 @@ const session = require("./config/session");
 const { PrismaClient } = require('@prisma/client');
 const passport = require('./config/passport');
 const authRoots = require("./routes/authRoots");
+const fileRoutes = require("./routes/fileRouter")
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -21,6 +22,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/', authRoots);
+app.use("/", fileRoutes)
 
 app.listen(3000, () => {
     console.log("app is listening at port 3000");

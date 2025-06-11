@@ -1,0 +1,294 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: linear-gradient(
+    135deg,
+    #0c0c0c 0%,
+    #1a0d2e 25%,
+    #16213e 50%,
+    #0f3460 75%,
+    #533483 100%
+  );
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Animated background elements */
+.bg-element {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.6;
+  animation: float 20s infinite ease-in-out;
+  z-index: 1;
+}
+
+.planet1 {
+  width: 600px;
+  height: 600px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  top: -300px;
+  right: -200px;
+  animation-delay: -5s;
+}
+
+.planet2 {
+  width: 400px;
+  height: 400px;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  bottom: -200px;
+  left: -150px;
+  animation-delay: -10s;
+}
+
+.orb1 {
+  width: 150px;
+  height: 150px;
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  top: 20%;
+  left: 10%;
+  animation-delay: -2s;
+}
+
+.orb2 {
+  width: 100px;
+  height: 100px;
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  top: 60%;
+  right: 15%;
+  animation-delay: -8s;
+}
+
+.orb3 {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  bottom: 30%;
+  left: 20%;
+  animation-delay: -15s;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(-20px, -30px) rotate(90deg);
+  }
+  50% {
+    transform: translate(20px, -50px) rotate(180deg);
+  }
+  75% {
+    transform: translate(-10px, -20px) rotate(270deg);
+  }
+}
+
+.login-container {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+}
+
+.login-card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  padding: 50px 40px;
+  text-align: center;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.login-card h1 {
+  color: white;
+  font-size: 2.2rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.95rem;
+  margin-bottom: 40px;
+  line-height: 1.4;
+}
+
+.login-form {
+  margin-bottom: 30px;
+}
+
+.input-group {
+  position: relative;
+  margin-bottom: 25px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 15px 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  color: white;
+  font-size: 16px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.input-group input:focus {
+  border-color: rgba(138, 43, 226, 0.8);
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 20px rgba(138, 43, 226, 0.3);
+}
+
+.input-group label {
+  position: absolute;
+  left: 16px;
+  top: 15px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 16px;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.input-group.focused label,
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label {
+  top: -10px;
+  left: 12px;
+  font-size: 12px;
+  color: #8a2be2;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 0 8px;
+  border-radius: 4px;
+}
+
+.show-password {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.show-password:hover {
+  color: #8a2be2;
+}
+
+.forgot-password {
+  text-align: right;
+  margin: -10px 0 30px 0;
+}
+
+.forgot-password a {
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.forgot-password a:hover {
+  color: #8a2be2;
+}
+
+.signin-btn {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(135deg, #8a2be2 0%, #4b0082 100%);
+  border: none;
+  border-radius: 12px;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 30px rgba(138, 43, 226, 0.3);
+}
+
+.signin-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 40px rgba(138, 43, 226, 0.4);
+}
+
+.signin-btn:active {
+  transform: translateY(0);
+}
+
+.divider {
+  margin: 30px 0;
+}
+
+.apple-signin {
+  width: 100%;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+}
+
+.apple-signin:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.signup-link {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
+  margin-top: 25px;
+}
+
+.signup-link a {
+  color: #8a2be2;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.signup-link a:hover {
+  color: #9a4ee8;
+  text-decoration: underline;
+}
+
+/* Responsive design */
+@media (max-width: 480px) {
+  .login-card {
+    padding: 40px 30px;
+    margin: 20px;
+  }
+
+  .login-card h1 {
+    font-size: 1.8rem;
+  }
+
+  .bg-element {
+    opacity: 0.3;
+  }
+
+  .planet1,
+  .planet2 {
+    opacity: 0.4;
+  }
+}

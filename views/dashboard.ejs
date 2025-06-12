@@ -1,0 +1,214 @@
+<!-- views/dashboard.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-image: url('/assets/10298b5802e0e3a3c5b42ac024073087.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #ffffff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .welcome {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .folder-card, .file-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .folder-card:hover, .file-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .folder-icon, .file-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            word-break: break-word;
+        }
+
+        .card-meta {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-bottom: 15px;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 12px;
+            border-radius: 5px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            opacity: 0.7;
+        }
+
+        .logout-form {
+            display: inline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="welcome">Welcome, <%= user.fullname %></div>
+            <div class="actions">
+                <a href="/folder/create" class="btn btn-primary">📁 New Folder</a>
+                <a href="/upload" class="btn btn-primary">📤 Upload File</a>
+                <form method="POST" action="/logout" class="logout-form">
+                    <button type="submit" class="btn btn-secondary">Logout</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Folders Section -->
+        <% if (folders.length > 0) { %>
+            <h2 class="section-title">📁 Folders</h2>
+            <div class="grid">
+                <% folders.forEach(folder => { %>
+                    <div class="folder-card">
+                        <div class="folder-icon">📁</div>
+                        <div class="card-title"><%= folder.name %></div>
+                        <div class="card-meta"><%= folder._count.files %> files</div>
+                        <div class="card-actions">
+                            <a href="/folder/<%= folder.id %>" class="btn btn-primary btn-small">Open</a>
+                            <a href="/folder/<%= folder.id %>/edit" class="btn btn-secondary btn-small">Edit</a>
+                            <form method="POST" action="/folder/<%= folder.id %>/delete" style="display: inline;" 
+                                  onsubmit="return confirm('Delete this folder and all its files?')">
+                                <button type="submit" class="btn btn-secondary btn-small">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        <% } %>
+
+        <!-- Root Files Section -->
+        <h2 class="section-title">📄 Files</h2>
+        <% if (files.length > 0) { %>
+            <div class="grid">
+                <% files.forEach(file => { %>
+                    <div class="file-card">
+                        <div class="file-icon">
+                            <% if (file.mimetype.startsWith('image/')) { %>📷
+                            <% } else if (file.mimetype.includes('pdf')) { %>📄
+                            <% } else if (file.mimetype.includes('word')) { %>📝
+                            <% } else { %>📎<% } %>
+                        </div>
+                        <div class="card-title"><%= file.originalName %></div>
+                        <div class="card-meta">
+                            <%= Math.round(file.size / 1024) %> KB • 
+                            <%= new Date(file.createdAt).toLocaleDateString() %>
+                        </div>
+                        <div class="card-actions">
+                            <a href="/file/<%= file.id %>" class="btn btn-primary btn-small">View</a>
+                            <a href="/file/<%= file.id %>/download" class="btn btn-secondary btn-small">Download</a>
+                        </div>
+                    </div>
+                <% }) %>
+            </div>
+        <% } else { %>
+            <div class="empty-state">
+                <p>No files yet. <a href="/upload">Upload your first file!</a></p>
+            </div>
+        <% } %>
+    </div>
+</body>
+</html>

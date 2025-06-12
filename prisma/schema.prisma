@@ -18,31 +18,31 @@ model Session {
   id        String   @id
   sid       String   @unique
   data      String   @db.Text
-  expiresAt   DateTime
+  expiresAt DateTime
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
+  id        String   @id @default(cuid())
   fullname  String
   username  String   @unique
   password  String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  folders   Folder[]
-  files     File[]
+  updatedAt DateTime @default(now()) @updatedAt
+
+  folders Folder[]
+  files   File[]
 }
 
 model Folder {
   id        Int      @id @default(autoincrement())
   name      String
-  userId    Int
+  userId    String   // Changed from Int to String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  files     File[]
-  
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  files File[]
+
   @@unique([name, userId])
 }
 
@@ -53,11 +53,11 @@ model File {
   mimetype     String
   size         Int
   path         String
-  userId       Int
+  userId       String   // Changed from Int to String
   folderId     Int?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  folder       Folder?  @relation(fields: [folderId], references: [id], onDelete: Cascade)
+
+  user   User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  folder Folder? @relation(fields: [folderId], references: [id], onDelete: Cascade)
 }

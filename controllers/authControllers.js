@@ -64,7 +64,7 @@ exports.verifyUser = (req, res, next) => {
       }
       console.log(`User ${user.username} logged in successfully`);
 
-      return res.redirect("/posts");
+      return res.redirect("/dashboard");
     });
   })(req, res, next);
 };

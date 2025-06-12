@@ -12,11 +12,13 @@
   "dependencies": {
     "@quixo3/prisma-session-store": "^3.1.13",
     "bcryptjs": "^3.0.2",
+    "cloudinary": "^1.41.3",
     "connect-pg-simple": "^10.0.0",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
     "express-session": "^1.18.1",
     "multer": "^2.0.1",
+    "multer-storage-cloudinary": "^4.0.0",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
     "pg": "^8.16.0"

@@ -26,6 +26,12 @@ app.use('/', authRoots);
 app.use("/", fileRoutes);
 app.use("/", folderRoute);
 
+console.log('=== ENVIRONMENT VARIABLES ===');
+console.log('CLOUDINARY_CLOUD_NAME:', JSON.stringify(process.env.CLOUDINARY_CLOUD_NAME));
+console.log('CLOUDINARY_API_KEY:', JSON.stringify(process.env.CLOUDINARY_API_KEY));
+console.log('CLOUDINARY_API_SECRET:', JSON.stringify(process.env.CLOUDINARY_API_SECRET));
+console.log('==============================');
+
 app.listen(3000, () => {
     console.log("app is listening at port 3000");
 });

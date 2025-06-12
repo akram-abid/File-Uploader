@@ -175,14 +175,14 @@ exports.uploadFile = async (req, res) => {
       });
 
       try {
+        // Fixed: Only include fields that exist in your Prisma schema
         const savedFile = await prisma.file.create({
           data: {
             originalName: file.originalname,
-            filename: file.filename, // Cloudinary public_id
+            filename: file.filename, // This contains the Cloudinary public_id
             mimetype: file.mimetype,
             size: file.size,
-            url: file.path, // Cloudinary URL
-            cloudinaryId: file.filename, // For deletion
+            path: file.path, // This contains the Cloudinary URL
             userId: req.user.id,
             folderId: folderId,
           },
@@ -204,7 +204,7 @@ exports.uploadFile = async (req, res) => {
         originalName: file.originalName,
         size: file.size,
         mimetype: file.mimetype,
-        url: file.url
+        path: file.path // Using path instead of url since that's what your schema has
       })),
       redirectUrl: folderId ? `/folder/${folderId}` : "/dashboard"
     });
@@ -306,8 +306,8 @@ exports.downloadFile = async (req, res) => {
       return res.status(404).render("error", { error: "File not found" });
     }
 
-    // Create download URL from Cloudinary
-    const downloadUrl = cloudinary.url(file.cloudinaryId, {
+    // Create download URL from Cloudinary using filename (which contains the public_id)
+    const downloadUrl = cloudinary.url(file.filename, {
       flags: "attachment:" + file.originalName
     });
     
@@ -332,10 +332,10 @@ exports.deleteFile = async (req, res) => {
       return res.status(404).render("error", { error: "File not found" });
     }
 
-    // Delete from Cloudinary
+    // Delete from Cloudinary using filename (which contains the public_id)
     try {
-      await cloudinary.uploader.destroy(file.cloudinaryId);
-      console.log('File deleted from Cloudinary:', file.cloudinaryId);
+      await cloudinary.uploader.destroy(file.filename);
+      console.log('File deleted from Cloudinary:', file.filename);
     } catch (cloudinaryError) {
       console.error("Error deleting from Cloudinary:", cloudinaryError);
     }

@@ -16,12 +16,25 @@ const requireAuth = (req, res, next) => {
   res.redirect("/log-in");
 };
 
-// Configure Cloudinary
+// Configure Cloudinary with error handling
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
+
+// Test Cloudinary connection
+const testCloudinary = async () => {
+  try {
+    const result = await cloudinary.api.ping();
+    console.log('Cloudinary connection successful:', result);
+  } catch (error) {
+    console.error('Cloudinary connection failed:', error);
+  }
+};
+
+// Call test on startup
+testCloudinary();
 
 // Configure Cloudinary storage for multer
 const storage = new CloudinaryStorage({
@@ -37,24 +50,37 @@ const storage = new CloudinaryStorage({
   },
 });
 
-// File filter
+// Enhanced file filter with better error messages
 const fileFilter = (req, file, cb) => {
-  const allowedTypes = /jpeg|jpg|png|gif|pdf|doc|docx|txt|zip|rar/;
-  const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-  const mimetype = allowedTypes.test(file.mimetype);
+  console.log('File filter - Processing file:', file.originalname, 'Mimetype:', file.mimetype);
+  
+  const allowedMimetypes = [
+    'image/jpeg', 'image/jpg', 'image/png', 'image/gif',
+    'application/pdf', 'application/msword', 
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'text/plain', 'application/zip', 'application/x-rar-compressed'
+  ];
+  
+  const allowedExtensions = /\.(jpeg|jpg|png|gif|pdf|doc|docx|txt|zip|rar)$/i;
+  
+  const extname = allowedExtensions.test(file.originalname);
+  const mimetype = allowedMimetypes.includes(file.mimetype);
 
   if (mimetype && extname) {
+    console.log('File accepted:', file.originalname);
     return cb(null, true);
   } else {
-    cb(new Error("Only images and documents are allowed!"));
+    console.log('File rejected:', file.originalname, 'Mimetype:', file.mimetype);
+    cb(new Error(`File type not allowed. Allowed types: images, PDF, DOC, DOCX, TXT, ZIP, RAR`));
   }
 };
 
-// Configure multer
+// Configure multer with error handling
 const upload = multer({
   storage: storage,
   limits: {
     fileSize: 10 * 1024 * 1024, // 10MB limit
+    files: 10 // Maximum 10 files
   },
   fileFilter: fileFilter,
 });
@@ -91,9 +117,24 @@ exports.showUploadForm = async (req, res) => {
   }
 };
 
-// Upload files
+// Enhanced upload handler with better error handling
 exports.uploadFile = async (req, res) => {
+  console.log('Upload attempt started');
+  console.log('Request files:', req.files);
+  console.log('Request body:', req.body);
+  console.log('User:', req.user ? req.user.id : 'No user');
+
+  // Check authentication
+  if (!req.user) {
+    return res.status(401).json({ 
+      success: false, 
+      error: "User not authenticated" 
+    });
+  }
+
+  // Check if files were provided
   if (!req.files || req.files.length === 0) {
+    console.log('No files provided in request');
     return res.status(400).json({ 
       success: false, 
       error: "No files provided" 
@@ -102,6 +143,7 @@ exports.uploadFile = async (req, res) => {
 
   try {
     const folderId = req.body.folderId ? parseInt(req.body.folderId) : null;
+    console.log('Folder ID:', folderId);
 
     // Verify folder belongs to user if provided
     if (folderId) {
@@ -112,9 +154,10 @@ exports.uploadFile = async (req, res) => {
         },
       });
       if (!folder) {
+        console.log('Folder access denied for user:', req.user.id, 'folder:', folderId);
         return res.status(403).json({ 
           success: false, 
-          error: "Access denied" 
+          error: "Access denied to folder" 
         });
       }
     }
@@ -123,21 +166,36 @@ exports.uploadFile = async (req, res) => {
     const savedFiles = [];
     
     for (const file of req.files) {
-      const savedFile = await prisma.file.create({
-        data: {
-          originalName: file.originalname,
-          filename: file.filename, // Cloudinary public_id
-          mimetype: file.mimetype,
-          size: file.size,
-          url: file.path, // Cloudinary URL
-          cloudinaryId: file.filename, // For deletion
-          userId: req.user.id,
-          folderId: folderId,
-        },
+      console.log('Processing file:', file.originalname);
+      console.log('File details:', {
+        filename: file.filename,
+        path: file.path,
+        size: file.size,
+        mimetype: file.mimetype
       });
-      savedFiles.push(savedFile);
+
+      try {
+        const savedFile = await prisma.file.create({
+          data: {
+            originalName: file.originalname,
+            filename: file.filename, // Cloudinary public_id
+            mimetype: file.mimetype,
+            size: file.size,
+            url: file.path, // Cloudinary URL
+            cloudinaryId: file.filename, // For deletion
+            userId: req.user.id,
+            folderId: folderId,
+          },
+        });
+        console.log('File saved to database:', savedFile.id);
+        savedFiles.push(savedFile);
+      } catch (dbError) {
+        console.error('Database error for file:', file.originalname, dbError);
+        throw dbError;
+      }
     }
 
+    console.log('All files processed successfully');
     res.json({
       success: true,
       message: `${savedFiles.length} file(s) uploaded successfully`,
@@ -152,24 +210,58 @@ exports.uploadFile = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Error uploading files:", error);
+    console.error("Detailed upload error:", error);
     
     // Clean up Cloudinary files if database save failed
     if (req.files) {
-      req.files.forEach(async (file) => {
+      console.log('Cleaning up Cloudinary files due to error');
+      for (const file of req.files) {
         try {
           await cloudinary.uploader.destroy(file.filename);
+          console.log('Cleaned up Cloudinary file:', file.filename);
         } catch (deleteError) {
           console.error("Error deleting from Cloudinary:", deleteError);
         }
-      });
+      }
     }
     
     res.status(500).json({ 
       success: false, 
-      error: "Failed to upload files" 
+      error: "Failed to upload files: " + error.message 
     });
   }
+};
+
+// Middleware wrapper to handle multer errors
+exports.uploadMiddleware = (req, res, next) => {
+  upload.array("files", 10)(req, res, (err) => {
+    if (err instanceof multer.MulterError) {
+      console.error('Multer error:', err);
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(400).json({
+          success: false,
+          error: 'File too large. Maximum size is 10MB.'
+        });
+      }
+      if (err.code === 'LIMIT_FILE_COUNT') {
+        return res.status(400).json({
+          success: false,
+          error: 'Too many files. Maximum is 10 files.'
+        });
+      }
+      return res.status(400).json({
+        success: false,
+        error: 'Upload error: ' + err.message
+      });
+    } else if (err) {
+      console.error('Upload error:', err);
+      return res.status(400).json({
+        success: false,
+        error: err.message
+      });
+    }
+    next();
+  });
 };
 
 // Show file details
@@ -243,6 +335,7 @@ exports.deleteFile = async (req, res) => {
     // Delete from Cloudinary
     try {
       await cloudinary.uploader.destroy(file.cloudinaryId);
+      console.log('File deleted from Cloudinary:', file.cloudinaryId);
     } catch (cloudinaryError) {
       console.error("Error deleting from Cloudinary:", cloudinaryError);
     }
@@ -263,5 +356,4 @@ exports.deleteFile = async (req, res) => {
   }
 };
 
-exports.uploadMiddleware = upload.array("files", 10);
 exports.requireAuth = requireAuth;
